@@ -4,32 +4,30 @@ A robust, console-based Java application designed to handle core banking operati
 
 ## 🌟 Key Technical Features
 
-* **Transaction Management (ACID Compliance):** Implements manual commit and rollback logic in the `AccountManager` class to ensure that money transfers are atomic—either both the debit and credit succeed, or neither does.
-* **Secure User Authentication:** Features a registration and login system that validates unique email addresses and protects user sessions.
-* **Automated Account Generation:** Uses logic to generate unique 8-digit account numbers (starting at 10000100) based on the last entry in the database.
-* **Data Validation:** Includes security pin verification for every sensitive action, including debits, credits, and balance inquiries, to prevent unauthorized access.
+* **Transaction Management (ACID Compliance):** Implements manual commit and rollback logic in the `AccountManager` class. This ensures that money transfers are atomic—either both the debit and credit succeed, or the entire transaction is rolled back to prevent data inconsistency.
+* **Secure User Authentication:** Features a registration and login system that validates unique email addresses and protects user sessions via password-protected access.
+* **Automated Account Generation:** Uses logic to fetch the last assigned account number from the database and generate a unique 8-digit successor (starting at 10000100).
+* **Multi-Layer Security:** Includes security pin verification for all sensitive operations, including debits, credits, and balance inquiries.
 
 ## 🛠 Tech Stack
 
 * **Language:** Java (JDK 20)
-* **Database:** MySQL
+* **Database:** MySQL 8.0
 * **API:** JDBC (Java Database Connectivity)
-* **Build Tool:** IntelliJ IDEA Module Structure
+* **Driver:** MySQL Connector/J 8.1.0
 
 ## 📂 Project Architecture
 
-### Database Schema
-The system utilizes a relational database design with two primary tables: `user` for authentication and `accounts` for financial records.
-
-
-
-![Database Schema](Database%20Schema.png)
+### Data Model
+The system utilizes a relational database design consisting of two primary tables:
+* **User Table:** Manages authentication data including Full Name, Email (Primary Key), and Password.
+* **Accounts Table:** Manages financial data including Account Number (Primary Key), Balance (Decimal), and a 4-digit Security Pin.
 
 ### Core Modules
-* **`BankingApp.java`**: The main entry point handling the application loop, menu navigation, and database connection initialization.
-* **`AccountManager.java`**: Contains the critical business logic for debits, credits, and inter-bank transfers.
-* **`Accounts.java`**: Manages account opening, existence checks, and account number generation.
-* **`User.java`**: Handles user registration and login validation against the MySQL database.
+* **`BankingApp.java`**: The main controller that manages the application lifecycle, user menus, and the central database connection.
+* **`AccountManager.java`**: Handles the critical business logic for credit, debit, and inter-bank money transfers using SQL PreparedStatements.
+* **`Accounts.java`**: Responsible for account lifecycle management, including account opening and existence verification.
+* **`User.java`**: Manages the user registration pipeline and login authentication logic.
 
 ## 🚀 Getting Started
 
@@ -37,15 +35,16 @@ The system utilizes a relational database design with two primary tables: `user`
     ```bash
     git clone [https://github.com/pranjli-s/bankingsystem.git](https://github.com/pranjli-s/bankingsystem.git)
     ```
-2.  **Configure the Database**:
-    * Create a database named `banking_system` in MySQL.
-    * Execute the schema found in the `Database Schema.png` visual.
-    * Update the `url`, `username`, and `password` variables in `BankingApp.java` to match your local MySQL credentials.
-3.  **Compile and Run**:
-    * Ensure the `mysql-connector-j-8.1.0.jar` is added to your project's library path.
-    * Run `BankingApp.java`.
+2.  **Database Setup**:
+    * Create a MySQL database named `banking_system`.
+    * Create the `user` and `accounts` tables as defined in the source code models.
+    * Update the `url`, `username`, and `password` constants in `BankingApp.java` to match your local environment.
+3.  **Dependencies**:
+    * Ensure the `mysql-connector-j-8.1.0.jar` is included in your project's build path or library folder.
+4.  **Run**:
+    * Compile and run `BankingApp.java` to start the console interface.
 
-## 📸 Demo Highlights
-* **Registration:** Create a new user profile securely with duplicate email detection.
-* **Transactions:** Perform real-time balance updates (Credit/Debit) with instant feedback.
-* **Security:** Unauthorized transfers and balance checks are blocked if the security pin is incorrect.
+## 💡 Functional Highlights
+* **Account Opening:** Requires an initial deposit and the setting of a secret 4-digit transaction pin.
+* **Atomic Transfers:** Prevents "ghost money" by ensuring a sender is debited only if the receiver is successfully credited.
+* **Validation:** Prevents over-drafting by checking balances before authorizing any debit request.
